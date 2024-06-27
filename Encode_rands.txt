@@ -1,0 +1,31 @@
+--DECLARE @Source VARCHAR(50) = '2172040901850004'
+--DECLARE @Encoded VARCHAR(500) = CONVERT(VARCHAR(500), (SELECT CONVERT(VARBINARY, @Source) FOR XML PATH(''), BINARY BASE64))
+--DECLARE @Decoded VARCHAR(500) = CONVERT(VARCHAR(500), CONVERT(XML, @Encoded).value('.','varbinary(max)'))
+--SELECT @Source AS [Source], @Encoded AS [Encoded], @Decoded AS [Decoded]
+
+--drop table ADS_AA.dbo.Shopee_Backtest_Hashed
+
+select *
+,CONVERT(VARCHAR(500), CONVERT(XML, Encoded_idnumber).value('.','varbinary(max)')) Decoded_idnumber
+,CONVERT(VARCHAR(500), CONVERT(XML, Encoded_mobilephonenumber).value('.','varbinary(max)')) Decoded_mobilephonenumber
+into ADS_AA.dbo.Shopee_Backtest_Hashed
+from
+    (
+		select createddate
+			  ,idnumber
+			  ,sampleid
+			  , mobilephonenumber 
+			  ,CONVERT(VARCHAR(500), (SELECT CONVERT(VARBINARY, idnumber) FOR XML PATH(''), BINARY BASE64)) Encoded_idnumber
+			  ,CONVERT(VARCHAR(500), (SELECT CONVERT(VARBINARY, mobilephonenumber) FOR XML PATH(''), BINARY BASE64)) Encoded_mobilephonenumber
+	  
+		from ADS_AA.dbo.alv_Shopee_Backtest_Final
+     ) a
+
+
+
+-----rand----
+
+select *
+      ,ROW_NUMBER ( )   
+		 OVER (  ORDER BY newid()) rn
+from #t3
